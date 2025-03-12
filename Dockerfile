@@ -3,14 +3,14 @@ FROM php:8.1-apache
 
 # Install system dependencies for PHP extensions and tools
 RUN apt-get update && apt-get install -y \
-    libpng-dev libjpeg62-turbo-dev libfreetype6-dev \ 
-    libzip-dev zlib1g-dev \ 
-    libicu-dev libonig-dev \ 
-    unzip curl \
-  && docker-php-ext-configure gd --with-freetype --with-jpeg \ 
-  && docker-php-ext-install -j$(nproc) gd mysqli pdo_mysql zip intl mbstring \ 
-  && a2enmod rewrite \ 
+    mysql-server mysql-client \
+    libpng-dev libjpeg62-turbo-dev libfreetype6-dev \
+    libzip-dev zlib1g-dev libicu-dev libonig-dev unzip curl \
+  && docker-php-ext-configure gd --with-freetype --with-jpeg \
+  && docker-php-ext-install -j$(nproc) gd mysqli pdo_mysql zip intl mbstring \
+  && a2enmod rewrite \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
+
 
 # Use production PHP configurations for better performance
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
