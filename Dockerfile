@@ -1,29 +1,35 @@
+# Base PHP 8.1 image with Apache
 FROM php:8.1-apache
 
-LABEL maintainer="Garcia MICHEL <garcia@soamichel.fr>"
-
-# Устанавливаем зависимости
+# Install system dependencies for PHP extensions and tools
 RUN apt-get update && apt-get install -y \
-    libpng-dev libjpeg62-turbo-dev libfreetype6-dev unzip curl zlib1g-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd mysqli pdo_mysql zip intl \
-    && a2enmod rewrite \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+    libpng-dev libjpeg62-turbo-dev libfreetype6-dev \ 
+    libzip-dev zlib1g-dev \ 
+    libicu-dev libonig-dev \ 
+    unzip curl \
+  && docker-php-ext-configure gd --with-freetype --with-jpeg \ 
+  && docker-php-ext-install -j$(nproc) gd mysqli pdo_mysql zip intl mbstring \ 
+  && a2enmod rewrite \ 
+  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Определяем версию Dolibarr
-ARG DOLI_VERSION=19.0.3
+# Use production PHP configurations for better performance
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
-# Скачиваем и устанавливаем Dolibarr
-RUN curl -fSL "https://github.com/Dolibarr/dolibarr/archive/${DOLI_VERSION}.tar.gz" -o dolibarr.tar.gz \
-    && mkdir -p /tmp/dolibarr \
-    && tar -xzf dolibarr.tar.gz --strip-components=1 -C /tmp/dolibarr \
-    && mv /tmp/dolibarr/htdocs /var/www/html \
-    && mkdir -p /var/www/documents /var/www/html/custom \
-    && chown -R www-data:www-data /var/www/html /var/www/documents \
-    && rm -rf /tmp/dolibarr dolibarr.tar.gz
+# Set Dolibarr version environment variable
+ENV DOLIBARR_VERSION=21.0.0
 
-# Открываем порт 80
+# Download and extract Dolibarr into the web root
+RUN curl -L "https://sourceforge.net/projects/dolibarr/files/Dolibarr%20ERP-CRM/${DOLIBARR_VERSION}/dolibarr-${DOLIBARR_VERSION}.zip/download" -o /tmp/dolibarr.zip \ 
+  && unzip /tmp/dolibarr.zip -d /tmp \ 
+  && mv /tmp/dolibarr-${DOLIBARR_VERSION}/htdocs/* /var/www/html/ \ 
+  && rm -rf /tmp/dolibarr-${DOLIBARR_VERSION} /tmp/dolibarr.zip
+
+# Set correct file permissions for Apache
+RUN chown -R www-data:www-data /var/www/html
+
+# Expose HTTP port
 EXPOSE 80
 
-# Запускаем Apache
+# Entrypoint and CMD to start Apache and serve Dolibarr
+ENTRYPOINT ["docker-php-entrypoint"]
 CMD ["apache2-foreground"]
