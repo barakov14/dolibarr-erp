@@ -57,20 +57,33 @@ fi
 
 
 # Удаляем папку установки для безопасности, если она существует
+# if [ -d "/var/www/html/install" ]; then
+#     echo "Удаляем папку установки..."
+#     rm -rf /var/www/html/install
+# fi
+
+# if [ ! -f /var/www/html/conf/conf.php ]; then
+#     echo "Восстанавливаем conf.php..."
+#     cp /backup/conf.php /var/www/html/conf/conf.php
+#     chown www-data:www-data /var/www/html/conf/conf.php
+# fi
+
+# if [ ! -f /var/www/html/install.lock ]; then
+#     echo "Восстанавливаем install.lock..."
+#     cp /backup/install.lock /var/www/html/install.lock
+# fi
+
+
+# ✅ Создаём install.lock, чтобы Dolibarr не требовал установку
+if [ ! -f "/var/www/html/install.lock" ]; then
+    echo "Создаём install.lock..."
+    touch /var/www/html/install.lock
+fi
+
+# ✅ Удаляем папку установки для безопасности
 if [ -d "/var/www/html/install" ]; then
     echo "Удаляем папку установки..."
     rm -rf /var/www/html/install
-fi
-
-if [ ! -f /var/www/html/conf/conf.php ]; then
-    echo "Восстанавливаем conf.php..."
-    cp /backup/conf.php /var/www/html/conf/conf.php
-    chown www-data:www-data /var/www/html/conf/conf.php
-fi
-
-if [ ! -f /var/www/html/install.lock ]; then
-    echo "Восстанавливаем install.lock..."
-    cp /backup/install.lock /var/www/html/install.lock
 fi
 
 
