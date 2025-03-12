@@ -1,6 +1,6 @@
 <?php
 // URL твоего приложения на Railway (замени на свой URL)
-$dolibarr_main_url_root='';
+$dolibarr_main_url_root='https://dolibarr-erp.onrender.com/';
 
 // Абсолютный путь к каталогу htdocs (обычно Dolibarr сам подхватит)
 $dolibarr_main_document_root=__DIR__.'/..';
