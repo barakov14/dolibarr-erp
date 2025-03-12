@@ -1,25 +1,28 @@
-# Use the official PHP Apache image
 FROM php:8.1-apache
 
-# Install required PHP extensions
+# Устанавливаем зависимости PHP и расширения
 RUN apt-get update && apt-get install -y \
-    libpng-dev libjpeg-dev libfreetype6-dev \
-    && docker-php-ext-install gd mysqli pdo pdo_mysql
+    libpng-dev libjpeg-dev libfreetype6-dev unzip \
+    && docker-php-ext-install mysqli pdo_mysql gd \
+    && docker-php-ext-enable mysqli pdo_mysql gd \
+    && a2enmod rewrite
 
-# Enable Apache mod_rewrite
+# Включаем mod_rewrite и устанавливаем права
 RUN a2enmod rewrite
 
-# Set up the working directory
-WORKDIR /var/www/html
-
-# Copy Dolibarr source code
+# Копируем код Dolibarr в контейнер
 COPY . /var/www/html/
 
-# Set correct permissions
-RUN chown -R www-data:www-data /var/www/html
+# Устанавливаем правильные права
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 777 /var/www/html/documents \
+    && chmod -R 777 /var/www/html/htdocs/conf
 
-# Expose port 80
+# Устанавливаем DocumentRoot на htdocs
+RUN sed -i 's|/var/www/html|/var/www/html/htdocs|g' /etc/apache2/sites-available/000-default.conf
+
+# Открываем 80 порт
 EXPOSE 80
 
-# Start Apache
+# Запускаем Apache
 CMD ["apache2-foreground"]
