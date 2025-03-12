@@ -29,6 +29,9 @@ RUN chown -R www-data:www-data /var/www/html
 # Expose HTTP port
 EXPOSE 80
 
+COPY conf.php /backup/conf.php
+RUN touch /backup/install.lock
+
 # Копируем и даем права на скрипт запуска MySQL + Apache
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
