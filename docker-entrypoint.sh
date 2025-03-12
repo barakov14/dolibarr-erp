@@ -1,5 +1,14 @@
-# #!/bin/bash
-# set -e
+#!/bin/bash
+set -e
+
+
+# ✅ Создаём папку для документов (если её нет)
+if [ ! -d "/var/www/documents" ]; then
+    echo "Создаём папку /var/www/documents..."
+    mkdir -p /var/www/documents
+    chown -R www-data:www-data /var/www/documents
+    chmod -R 775 /var/www/documents
+fi
 
 # # Создаём конфиг Dolibarr (используем переменные окружения)
 # if [ ! -f /var/www/html/conf/conf.php ]; then
@@ -32,12 +41,12 @@
 #     echo "Файл conf.php создан успешно!"
 # fi
 
-# # Удаляем папку установки (для безопасности)
-# if [ -d "/var/www/html/install" ]; then
-#     echo "Удаляем папку установки..."
-#     rm -rf /var/www/html/install
-# fi
+# Удаляем папку установки (для безопасности)
+if [ -d "/var/www/html/install" ]; then
+    echo "Удаляем папку установки..."
+    rm -rf /var/www/html/install
+fi
 
 # # Запускаем Apache
 # echo "Запуск Apache..."
-# exec apache2-foreground
+exec apache2-foreground
