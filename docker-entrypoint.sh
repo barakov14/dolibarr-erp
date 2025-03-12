@@ -1,27 +1,41 @@
 #!/bin/bash
 set -e
 
-# Проверяем, установлен ли MySQL
-if ! command -v mysqld &> /dev/null
-then
-    echo "Ошибка: MariaDB (MySQL) не установлен!"
-    exit 1
+# Создаём конфиг Dolibarr (используем переменные окружения)
+if [ ! -f /var/www/html/conf/conf.php ]; then
+    echo "Создаём файл конфигурации conf.php..."
+
+    cat <<EOL > /var/www/html/conf/conf.php
+<?php
+\$dolibarr_main_url_root='${DOLI_MAIN_URL}';
+\$dolibarr_main_document_root='/var/www/html';
+\$dolibarr_main_data_root='/var/www/documents';
+
+\$dolibarr_main_db_type='mysqli';
+\$dolibarr_main_db_host='${MYSQLHOST}';
+\$dolibarr_main_db_port='${MYSQLPORT}';
+\$dolibarr_main_db_name='${MYSQLDATABASE}';
+\$dolibarr_main_db_user='${MYSQLUSER}';
+\$dolibarr_main_db_pass='${MYSQLPASSWORD}';
+
+\$dolibarr_main_db_character_set='utf8mb4';
+\$dolibarr_main_db_collation='utf8mb4_unicode_ci';
+
+\$dolibarr_main_authentication='dolibarr';
+\$dolibarr_main_db_prefix='llx_';
+
+\$dolibarr_main_force_https=1;
+\$dolibarr_main_instance_unique_id='84b5bc91f83b56e458db71e0adac2b62';
+?>
+EOL
+
+    echo "Файл conf.php создан успешно!"
 fi
 
-# Запускаем MariaDB
-echo "Запуск MariaDB..."
-service mariadb start
-
-echo "Ждём запуск MariaDB..."
-sleep 5  # Ждём 5 секунд, пока база полностью запустится
-
-# Проверяем, создана ли база данных
-if [ ! -d "/var/lib/mysql/dolibarr" ]; then
-    echo "Создаём базу данных Dolibarr..."
-    mysql -uroot -e "CREATE DATABASE IF NOT EXISTS dolibarr CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-    mysql -uroot -e "CREATE USER IF NOT EXISTS 'dolibarr'@'localhost' IDENTIFIED BY 'dolibarr';"
-    mysql -uroot -e "GRANT ALL PRIVILEGES ON dolibarr.* TO 'dolibarr'@'localhost';"
-    mysql -uroot -e "FLUSH PRIVILEGES;"
+# Удаляем папку установки (для безопасности)
+if [ -d "/var/www/html/install" ]; then
+    echo "Удаляем папку установки..."
+    rm -rf /var/www/html/install
 fi
 
 # Запускаем Apache
