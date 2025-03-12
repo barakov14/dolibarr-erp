@@ -42,11 +42,11 @@ fi
 # fi
 
 # Удаляем папку установки (для безопасности)
-if [ -d "/var/www/html/install" ]; then
-    echo "Удаляем папку установки..."
-    rm -rf /var/www/html/install
-fi
+# if [ -d "/var/www/html/install" ]; then
+#     echo "Удаляем папку установки..."
+#     rm -rf /var/www/html/install
+# fi
 
 # # Запускаем Apache
-# echo "Запуск Apache..."
+echo "Запуск Apache..."
 exec apache2-foreground
