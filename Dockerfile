@@ -30,9 +30,9 @@ RUN chown -R www-data:www-data /var/www/html
 EXPOSE 80
 
 # Копируем и даем права на скрипт запуска MySQL + Apache
-COPY docker-entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+# COPY docker-entrypoint.sh /usr/local/bin/
+# RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Entrypoint and CMD to start Apache and serve Dolibarr
-ENTRYPOINT ["docker-entrypoint.sh"]
+# ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["apache2-foreground"]
