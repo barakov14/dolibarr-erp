@@ -42,11 +42,37 @@ else
     echo "Файл conf.php уже существует, пропускаем создание."
 fi
 
+
+if [ ! -f /var/www/html/install.lock ]; then
+    echo "Создаём install.lock, чтобы избежать повторной установки..."
+    touch /var/www/html/install.lock
+fi
+
+if [ ! -d "/var/www/documents" ]; then
+    echo "Создаём папку документов..."
+    mkdir -p /var/www/documents
+    chown -R www-data:www-data /var/www/documents
+    chmod -R 775 /var/www/documents
+fi
+
+
 # Удаляем папку установки для безопасности, если она существует
 if [ -d "/var/www/html/install" ]; then
     echo "Удаляем папку установки..."
     rm -rf /var/www/html/install
 fi
+
+if [ ! -f /var/www/html/conf/conf.php ]; then
+    echo "Восстанавливаем conf.php..."
+    cp /backup/conf.php /var/www/html/conf/conf.php
+    chown www-data:www-data /var/www/html/conf/conf.php
+fi
+
+if [ ! -f /var/www/html/install.lock ]; then
+    echo "Восстанавливаем install.lock..."
+    cp /backup/install.lock /var/www/html/install.lock
+fi
+
 
 echo "Запуск Apache..."
 exec apache2-foreground
