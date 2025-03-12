@@ -2,15 +2,15 @@ FROM php:8.1-apache
 
 LABEL maintainer="Garcia MICHEL <garcia@soamichel.fr>"
 
-# Обновляем пакетный менеджер и устанавливаем нужные пакеты
-RUN apt-get update && apt-get upgrade -y && apt-get install -y \
-    libpng-dev libjpeg-dev libfreetype6-dev unzip curl \
+# Устанавливаем зависимости
+RUN apt-get update && apt-get install -y \
+    libpng-dev libjpeg62-turbo-dev libfreetype6-dev unzip curl zlib1g-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install mysqli pdo_mysql gd zip intl \
+    && docker-php-ext-install -j$(nproc) gd mysqli pdo_mysql zip intl \
     && a2enmod rewrite \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Переменная для версии Dolibarr
+# Определяем версию Dolibarr
 ARG DOLI_VERSION=19.0.3
 
 # Скачиваем и устанавливаем Dolibarr
