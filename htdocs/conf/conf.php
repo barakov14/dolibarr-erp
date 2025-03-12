@@ -10,11 +10,11 @@ $dolibarr_main_data_root=realpath(__DIR__.'/../../documents');
 
 // База данных на Railway (используй MYSQLPUBLICURL)
 $dolibarr_main_db_type='mysqli';
-$dolibarr_main_db_host='containers-us-west-124.railway.app'; // 👈 замени на host из MYSQL_PUBLIC_URL
-$dolibarr_main_db_port='3306'; // 👈 замени на порт из MYSQL_PUBLIC_URL
-$dolibarr_main_db_name='railway';
-$dolibarr_main_db_user='root';
-$dolibarr_main_db_pass='DVqIwN5v08W5pJ2w'; // 👈 пароль отсюда MYSQLPASSWORD
+$dolibarr_main_db_host=getenv('MYSQLHOST');
+$dolibarr_main_db_port=getenv('MYSQLPORT');
+$dolibarr_main_db_name=getenv('MYSQLDATABASE');
+$dolibarr_main_db_user=getenv('MYSQLUSER');
+$dolibarr_main_db_pass=getenv('MYSQLPASSWORD');
 
 // Кодировка (рекомендуется)
 $dolibarr_main_db_character_set='utf8mb4';
