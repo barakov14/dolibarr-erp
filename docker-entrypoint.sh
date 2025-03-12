@@ -80,12 +80,6 @@ if [ ! -f "/var/www/html/install.lock" ]; then
     touch /var/www/html/install.lock
 fi
 
-# ✅ Удаляем папку установки для безопасности
-if [ -d "/var/www/html/install" ]; then
-    echo "Удаляем папку установки..."
-    rm -rf /var/www/html/install
-fi
-
 
 echo "Запуск Apache..."
 exec apache2-foreground
