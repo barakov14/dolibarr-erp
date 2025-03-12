@@ -7,7 +7,7 @@ if [ ! -f /var/www/html/conf/conf.php ]; then
 
     cat <<EOL > /var/www/html/conf/conf.php
 <?php
-\$dolibarr_main_url_root='${DOLI_MAIN_URL}';
+\$dolibarr_main_url_root='https://dolibarr-erp.onrender.com';
 \$dolibarr_main_document_root='/var/www/html';
 \$dolibarr_main_data_root='/var/www/documents';
 
